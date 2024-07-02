@@ -1,8 +1,8 @@
-const apiKey = "e8d13a4a06c9462884711414241506";
+const apiKey = "c58a8fecf2ce49fa855225332240207";
 const showCityName = document.getElementById("cityName");
+const input = document.getElementById("cityInput");
 let currentWeatherUrl;
 let forecastUrl;
-const input = document.getElementById("cityInput");
 document.getElementById("fetchWeatherBtn").addEventListener("click", function () {
   const city = document.getElementById("cityInput").value;
   if (city === "") {
@@ -11,12 +11,17 @@ document.getElementById("fetchWeatherBtn").addEventListener("click", function ()
     return;
   }
   else {
-  currentWeatherUrl = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}`;
-  forecastUrl = `http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=7`;
-  getWeatherData(currentWeatherUrl);
+    currentWeatherUrl = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}`;
+    forecastUrl = `http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=7`;
+    getWeatherData(currentWeatherUrl);
   }
 });
-
+input.addEventListener("keypress", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    document.getElementById("fetchWeatherBtn").click();
+  }
+});
 document.getElementById("currentCityBtn").addEventListener("click", function () {
   navigator.geolocation.getCurrentPosition((position) => {
     const lat = position.coords.latitude;
@@ -29,7 +34,14 @@ document.getElementById("currentCityBtn").addEventListener("click", function () 
 
 function getWeatherData() {
   fetch(currentWeatherUrl)
-    .then((response) => response.json())
+    .then((response) => {
+      if (response.status === 400) {
+        input.setCustomValidity("Please enter a valid city");
+        input.reportValidity();
+        throw new Error("Invalid city");
+      }
+      return response.json();
+    })
     .then((data) => {
       document.getElementById(
         "weatherCondition"
@@ -47,6 +59,9 @@ function getWeatherData() {
         "dateTime"
       ).textContent = `Date & Time: ${data.location.localtime}`;
       showCityName.innerText = `${data.location.name}, ${data.location.region}, ${data.location.country}`;
+    })
+    .catch((error) => {
+      console.error(error);
     });
 
   fetch(forecastUrl)

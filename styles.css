@@ -12,12 +12,16 @@ body {
   margin: 0;
 }
 .container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  background-color: #fff;
+  background-color: #dcdcdc;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
 input {
   padding: 10px;
   margin-bottom: 10px;
@@ -25,9 +29,35 @@ input {
   border-radius: 5px;
   width: 80%;
 }
-hr {
-  border: none;
-  border-top: 1px solid #ccc;
+.hr-text {
+  line-height: 1em;
+  position: relative;
+  outline: 0;
+  border: 0;
+  color: black;
+  text-align: center;
+  height: 1.5em;
+  opacity: .5;
+  
+}
+.hr-text:before {
+    content: '';
+    background: linear-gradient(to right, transparent, #818078, transparent);
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+}
+.hr-text:after {
+    content: attr(data-content);
+    position: relative;
+    display: inline-block;
+    color: black;
+    padding: 0 .5em;
+    line-height: 1.5em;
+    color: #818078;
+    background-color: #dcdcdc;
 }
 button {
   padding: 10px 20px;

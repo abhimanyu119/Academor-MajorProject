@@ -9,25 +9,28 @@
 </head>
 <body>
     <div class="container">
-        <h1>Weather App</h1>
-        <input type="text" id="cityInput" placeholder="Enter city name">
-        <button id="fetchWeatherBtn">Get Weather</button>
-        <hr>
-        <button id="currentCityBtn">Use Current Location</button>
-        
-        <div id="cityName"></div>
-        <div id="currentWeather">
-            <h2>Current Weather</h2>
-            <p id="weatherCondition"></p>
-            <p id="temperature"></p>
-            <p id="humidity"></p>
-            <p id="windSpeed"></p>
-            <p id="dateTime"></p>
+        <div class="input-container">
+            <h1>Weather App</h1>
+            <input type="text" id="cityInput" placeholder="Enter city name">
+            <button id="fetchWeatherBtn">Get Weather</button>
+            <hr class="hr-text" data-content="OR">
+            <button id="currentCityBtn">Use Current Location</button>
         </div>
+        <div class="output-container">
+            <div id="cityName"></div>
+            <div id="currentWeather">
+                <h2>Current Weather</h2>
+                <p id="weatherCondition"></p>
+                <p id="temperature"></p>
+                <p id="humidity"></p>
+                <p id="windSpeed"></p>
+                <p id="dateTime"></p>
+            </div>
         
-        <div id="forecast">
-            <h2>7-Day Forecast</h2>
-            <canvas id="forecastChart"></canvas>
+            <div id="forecast">
+                <h2>Forecast</h2>
+                <canvas id="forecastChart"></canvas>
+            </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
