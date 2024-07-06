@@ -3,34 +3,41 @@ const showCityName = document.getElementById("cityName");
 const input = document.getElementById("cityInput");
 let currentWeatherUrl;
 let forecastUrl;
-document.getElementById("fetchWeatherBtn").addEventListener("click", function () {
-  const city = document.getElementById("cityInput").value;
-  if (city === "") {
-    input.setCustomValidity("Please enter a city");
-    input.reportValidity();
-    return;
-  }
-  else {
-    currentWeatherUrl = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}`;
-    forecastUrl = `http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=7`;
-    getWeatherData(currentWeatherUrl);
-  }
-});
+let chart;
+
+document
+  .getElementById("fetchWeatherBtn")
+  .addEventListener("click", function () {
+    const city = input.value;
+    if (city === "") {
+      input.setCustomValidity("Please enter a city");
+      input.reportValidity();
+      return;
+    } else {
+      currentWeatherUrl = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}`;
+      forecastUrl = `http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=7`;
+      getWeatherData(currentWeatherUrl);
+    }
+  });
+
 input.addEventListener("keypress", (event) => {
   if (event.key === "Enter") {
     event.preventDefault();
     document.getElementById("fetchWeatherBtn").click();
   }
 });
-document.getElementById("currentCityBtn").addEventListener("click", function () {
-  navigator.geolocation.getCurrentPosition((position) => {
-    const lat = position.coords.latitude;
-    const lon = position.coords.longitude;
-    currentWeatherUrl = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${lat},${lon}`;
-    forecastUrl = `http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${lat},${lon}&days=7`;
-    getWeatherData(currentWeatherUrl);
+
+document
+  .getElementById("currentCityBtn")
+  .addEventListener("click", function () {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+      currentWeatherUrl = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${lat},${lon}`;
+      forecastUrl = `http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${lat},${lon}&days=7`;
+      getWeatherData(currentWeatherUrl);
+    });
   });
-});
 
 function getWeatherData() {
   fetch(currentWeatherUrl)
@@ -43,6 +50,7 @@ function getWeatherData() {
       return response.json();
     })
     .then((data) => {
+      document.querySelector(".output-container").style.display = "block";
       document.getElementById(
         "weatherCondition"
       ).textContent = `Condition: ${data.current.condition.text}`;
@@ -83,7 +91,7 @@ function getWeatherData() {
         chart.destroy();
       }
       chart = new Chart(ctx, {
-        type: "line",
+        type: "bar",
         data: {
           labels: dates,
           datasets: [
@@ -91,15 +99,17 @@ function getWeatherData() {
               label: "Temperature (°C)",
               data: temperatures,
               borderColor: "rgba(255, 99, 132, 1)",
-              borderWidth: 1,
-              fill: false,
+              borderWidth: 3,
+              fill: true,
+              backgroundColor: "rgba(255, 99, 132, 1)",
             },
             {
               label: "Humidity (%)",
               data: humidities,
               borderColor: "rgba(54, 162, 235, 1)",
-              borderWidth: 1,
-              fill: false,
+              borderWidth: 3,
+              fill: true,
+              backgroundColor: "rgba(54, 162, 235, 0.5)",
             },
           ],
         },
@@ -107,9 +117,73 @@ function getWeatherData() {
           scales: {
             y: {
               beginAtZero: true,
+              ticks: {
+                color: getComputedStyle(
+                  document.documentElement
+                ).getPropertyValue("--chart-text-color"),
+              },
+              grid: {
+                color: getComputedStyle(
+                  document.documentElement
+                ).getPropertyValue("--chart-grid-color"),
+              },
+              title: {
+                color: getComputedStyle(
+                  document.documentElement
+                ).getPropertyValue("--chart-label-color"),
+              },
+            },
+            x: {
+              ticks: {
+                color: getComputedStyle(
+                  document.documentElement
+                ).getPropertyValue("--chart-text-color"),
+              },
+              grid: {
+                color: getComputedStyle(
+                  document.documentElement
+                ).getPropertyValue("--chart-grid-color"),
+              },
+              title: {
+                color: getComputedStyle(
+                  document.documentElement
+                ).getPropertyValue("--chart-label-color"),
+              },
             },
           },
         },
       });
     });
 }
+
+document
+  .getElementById("themeToggleCheckbox")
+  .addEventListener("change", function () {
+    if (this.checked) {
+      document.body.setAttribute("data-theme", "dark");
+    } else {
+      document.body.removeAttribute("data-theme");
+    }
+
+    if (chart) {
+      chart.options.scales.y.ticks.color = getComputedStyle(
+        document.documentElement
+      ).getPropertyValue("--chart-text-color");
+      chart.options.scales.y.grid.color = getComputedStyle(
+        document.documentElement
+      ).getPropertyValue("--chart-grid-color");
+      chart.options.scales.y.title.color = getComputedStyle(
+        document.documentElement
+      ).getPropertyValue("--chart-label-color");
+      chart.options.scales.x.ticks.color = getComputedStyle(
+        document.documentElement
+      ).getPropertyValue("--chart-text-color");
+      chart.options.scales.x.grid.color = getComputedStyle(
+        document.documentElement
+      ).getPropertyValue("--chart-grid-color");
+      chart.options.scales.x.title.color = getComputedStyle(
+        document.documentElement
+      ).getPropertyValue("--chart-label-color");
+      chart.update();
+    }
+  });
